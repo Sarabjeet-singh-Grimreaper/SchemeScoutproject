@@ -1,3 +1,2 @@
-# SchemeScout
-
-This is my project setup test.
+## ✅ Update
+Testing Git push again 🚀
