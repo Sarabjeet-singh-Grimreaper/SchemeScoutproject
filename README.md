@@ -151,30 +151,12 @@ cd schemescout
 
 ---
 
-### 2️⃣ Backend Setup
+
+### 🚀 Run the project
 
 ```bash
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-
----
-
-### 3️⃣ Frontend Setup
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-### 🚀 Run Both Together
-
-```bash
-python run.py
+python scripts/seed_data.py
+python scripts/run.py
 ```
 
 ---
