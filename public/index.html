@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchemeScout - Punjab Welfare Schemes Finder</title>
+    <meta name="description" content="Find eligible Punjab Government welfare schemes instantly. Built by Bit-Wise 4.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        accent: {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="min-h-screen bg-gray-50 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="search" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">SchemeScout</h1>
+                        <p class="text-xs text-gray-500">Punjab Welfare Finder</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="showSection('deadline-alerts')" class="text-sm text-gray-600 hover:text-primary-600 flex items-center gap-1">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Alerts</span>
+                    </button>
+                    <button onclick="showSection('document-tracker')" class="text-sm text-gray-600 hover:text-primary-600 flex items-center gap-1">
+                        <i data-lucide="file-check" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Documents</span>
+                    </button>
+                    <span class="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full font-medium">
+                        Bit-Wise 4
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Hero Section -->
+        <section id="hero" class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                Find Your <span class="text-primary-600">Eligible Schemes</span>
+            </h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                Discover Punjab Government welfare schemes you qualify for. Our smart matching engine analyzes your profile against 50+ schemes instantly.
+            </p>
+            <div class="flex justify-center gap-4 flex-wrap">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+                    <span>Instant Eligibility Check</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+                    <span>Document Tracker</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+                    <span>Deadline Alerts</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Smart Wizard Form -->
+        <section id="eligibility-form" class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 sm:p-8 mb-8">
+            <div class="mb-8">
+                <!-- Progress Bar -->
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-medium text-gray-700">Step <span id="currentStep">1</span> of 4</span>
+                    <span class="text-sm text-gray-500" id="stepLabel">Personal Information</span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressBar" class="h-full bg-primary-600 rounded-full transition-all duration-500" style="width: 25%"></div>
+                </div>
+            </div>
+
+            <form id="schemeForm" class="space-y-6">
+                <!-- Step 1: Personal Information -->
+                <div id="step1" class="step-content">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Personal Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                            <input type="text" id="name" name="name" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                placeholder="Enter your full name">
+                            <div class="validation-icon hidden">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="age" class="block text-sm font-medium text-gray-700 mb-2">Age</label>
+                            <input type="number" id="age" name="age" required min="0" max="150"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                placeholder="Your age in years">
+                        </div>
+                        <div class="form-group">
+                            <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                            <select id="gender" name="gender" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
+                                <option value="">Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number (Optional)</label>
+                            <input type="tel" id="phone" name="phone"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                placeholder="+91 XXXXX XXXXX">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Category & Income -->
+                <div id="step2" class="step-content hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Category & Income Details</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                            <select id="category" name="category" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
+                                <option value="">Select category</option>
+                                <option value="General">General</option>
+                                <option value="SC">SC (Scheduled Caste)</option>
+                                <option value="BC">BC (Backward Class)</option>
+                                <option value="OBC">OBC (Other Backward Class)</option>
+                                <option value="ST">ST (Scheduled Tribe)</option>
+                                <option value="EWS">EWS (Economically Weaker Section)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="annual_income" class="block text-sm font-medium text-gray-700 mb-2">Annual Family Income (Rs.)</label>
+                            <input type="number" id="annual_income" name="annual_income" min="0"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                placeholder="e.g., 200000">
+                            <p class="text-xs text-gray-500 mt-1">Enter 0 if no income or unemployed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Occupation & Region -->
+                <div id="step3" class="step-content hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Occupation & Location</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label for="occupation" class="block text-sm font-medium text-gray-700 mb-2">Occupation</label>
+                            <select id="occupation" name="occupation" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
+                                <option value="">Select occupation</option>
+                                <option value="Student">Student</option>
+                                <option value="Farmer">Farmer</option>
+                                <option value="Labour">Labour/Worker</option>
+                                <option value="Construction Worker">Construction Worker</option>
+                                <option value="Self-Employed">Self-Employed</option>
+                                <option value="Government Employee">Government Employee</option>
+                                <option value="Private Employee">Private Employee</option>
+                                <option value="Unemployed">Unemployed</option>
+                                <option value="Retired">Retired/Pensioner</option>
+                                <option value="Homemaker">Homemaker</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="region" class="block text-sm font-medium text-gray-700 mb-2">District/Region</label>
+                            <select id="region" name="region" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors">
+                                <option value="">Select district</option>
+                                <option value="Mohali">Mohali (SAS Nagar)</option>
+                                <option value="Chandigarh">Chandigarh</option>
+                                <option value="Ludhiana">Ludhiana</option>
+                                <option value="Amritsar">Amritsar</option>
+                                <option value="Jalandhar">Jalandhar</option>
+                                <option value="Patiala">Patiala</option>
+                                <option value="Bathinda">Bathinda</option>
+                                <option value="Pathankot">Pathankot</option>
+                                <option value="Hoshiarpur">Hoshiarpur</option>
+                                <option value="Gurdaspur">Gurdaspur</option>
+                                <option value="Ferozepur">Ferozepur</option>
+                                <option value="Faridkot">Faridkot</option>
+                                <option value="Moga">Moga</option>
+                                <option value="Sangrur">Sangrur</option>
+                                <option value="Kapurthala">Kapurthala</option>
+                                <option value="Barnala">Barnala</option>
+                                <option value="Mansa">Mansa</option>
+                                <option value="Muktsar">Muktsar</option>
+                                <option value="Nawanshahr">Nawanshahr</option>
+                                <option value="Rupnagar">Rupnagar</option>
+                                <option value="Fatehgarh Sahib">Fatehgarh Sahib</option>
+                                <option value="Tarn Taran">Tarn Taran</option>
+                                <option value="Other">Other Punjab District</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Review -->
+                <div id="step4" class="step-content hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Review Your Information</h3>
+                    <div id="reviewContent" class="bg-gray-50 rounded-lg p-6 space-y-4">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4">
+                        <i data-lucide="info" class="w-4 h-4 inline mr-1"></i>
+                        Your information will be used to find matching schemes. We do not share your data.
+                    </p>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between pt-6 border-t border-gray-200">
+                    <button type="button" id="prevBtn" onclick="changeStep(-1)"
+                        class="hidden px-6 py-3 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        Previous
+                    </button>
+                    <button type="button" id="nextBtn" onclick="changeStep(1)"
+                        class="ml-auto px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2">
+                        Next
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                    <button type="submit" id="submitBtn"
+                        class="hidden ml-auto px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        Find Schemes
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Results Section (Initially Hidden) -->
+        <section id="results" class="hidden">
+            <!-- Results Summary -->
+            <div id="resultsSummary" class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 mb-8">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Scheme Cards Grid -->
+            <div id="schemeCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Deadline Alerts Section (Initially Hidden) -->
+        <section id="deadline-alerts" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Deadline Alerts</h2>
+                <button onclick="showSection('eligibility-form')" class="text-sm text-primary-600 hover:underline">
+                    Back to Form
+                </button>
+            </div>
+            <div id="deadlineContent" class="space-y-4">
+                <!-- Populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Document Tracker Section (Initially Hidden) -->
+        <section id="document-tracker" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Document Tracker</h2>
+                <button onclick="showSection('eligibility-form')" class="text-sm text-primary-600 hover:underline">
+                    Back to Form
+                </button>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Document Vault</h3>
+                <p class="text-gray-600 mb-6">Check the documents you already have. We'll show you which schemes you're ready to apply for.</p>
+                <div id="documentChecklist" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Document checkboxes populated by JavaScript -->
+                </div>
+                <button onclick="checkDocumentEligibility()" 
+                    class="mt-6 px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                    Check Document Match
+                </button>
+                <div id="documentResults" class="mt-6 hidden">
+                    <!-- Results populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
+                            <i data-lucide="search" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">SchemeScout</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        Helping Punjab citizens discover and access government welfare schemes they deserve.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white">Check Eligibility</a></li>
+                        <li><a href="#" class="hover:text-white">Document Tracker</a></li>
+                        <li><a href="#" class="hover:text-white">Deadline Alerts</a></li>
+                        <li><a href="https://punjab.gov.in" target="_blank" class="hover:text-white">Punjab Portal</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Team Bit-Wise 4</h4>
+                    <p class="text-gray-400 text-sm mb-4">
+                        Built for the Punjab Government Hackathon 2026
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i data-lucide="github" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i data-lucide="linkedin" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-500">
+                &copy; 2026 SchemeScout by Bit-Wise 4. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 text-center">
+            <div class="animate-spin w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p class="text-gray-700 font-medium">Finding your schemes...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-4 rounded-lg shadow-xl z-50">
+        <p id="toastMessage"></p>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
